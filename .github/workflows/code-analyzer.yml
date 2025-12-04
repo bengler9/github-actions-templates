@@ -6,6 +6,7 @@ on:
       account_id:
         description: 'Account ID for S3 path'
         required: false
+        type: string
       project_name:
         description: 'Project name (defaults to repository name)'
         required: false

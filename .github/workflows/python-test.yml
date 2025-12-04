@@ -41,6 +41,7 @@ on:
       account_id:
         description: 'Account ID for S3 uploads'
         required: false
+        type: string
     secrets:
       gitlab_api_token:
         description: 'GitLab API token for private packages'

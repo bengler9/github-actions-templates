@@ -193,6 +193,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           
+          # Install project dependencies from requirements.txt first
+          # This ensures actual packages (like pymysql, requests, etc.) are installed
+          # before we install type stubs, matching GitLab CI behavior
           if [ -f "${{ inputs.requirements_file }}" ]; then
             # Handle GitLab private packages if token provided
             if [ -n "${{ secrets.gitlab_api_token }}" ]; then
@@ -204,7 +207,9 @@ jobs:
             fi
           fi
           
-          # Install mypy and type stubs (matches GitLab CI)
+          # Install mypy and type stubs (matches GitLab CI exactly)
+          # Note: Actual packages (pymysql, requests, etc.) should be in requirements.txt
+          # Type stubs provide type information for mypy but require the actual packages
           pip install awscli lxml mypy boto3-stubs types-PyMySQL types-beautifulsoup4 types-python-dateutil types-requests
       
       - name: Run mypy

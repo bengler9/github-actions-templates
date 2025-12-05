@@ -229,21 +229,40 @@ jobs:
           # Install mypy and type stubs (matches GitLab CI exactly)
           # Note: Actual packages (pymysql, requests, etc.) should be in requirements.txt
           # Type stubs provide type information for mypy but require the actual packages
+          echo "=========================================="
           echo "Installing mypy and type stubs..."
-          pip install awscli lxml mypy boto3-stubs types-PyMySQL types-beautifulsoup4 types-python-dateutil types-requests
+          echo "=========================================="
+          # Install all mypy dependencies including pymysql and types-PyMySQL
+          # Installing pymysql explicitly ensures it's available even if not in requirements.txt
+          echo "Running: pip install pymysql types-PyMySQL awscli lxml mypy boto3-stubs types-beautifulsoup4 types-python-dateutil types-requests"
+          pip install pymysql types-PyMySQL awscli lxml mypy boto3-stubs types-beautifulsoup4 types-python-dateutil types-requests
+          echo "=========================================="
+          echo "Type stubs installation completed"
+          echo "=========================================="
           
           # Verify pymysql and types-PyMySQL are installed (for debugging)
           echo "=== Verifying installed packages ==="
-          pip show pymysql || echo "⚠️  pymysql not installed"
-          pip show types-PyMySQL || echo "⚠️  types-PyMySQL not installed"
+          pip show pymysql && echo "✅ pymysql is installed" || echo "⚠️  pymysql not installed"
+          pip show types-PyMySQL && echo "✅ types-PyMySQL is installed" || echo "⚠️  types-PyMySQL not installed"
           echo "=== Installed packages containing 'mysql' or 'mypy' ==="
           pip list | grep -iE "(mysql|mypy)" || echo "No matching packages found"
+          
+          # Verify Python can import pymysql (tests the installation)
+          echo "=== Testing pymysql import ==="
+          python -c "import pymysql; print(f'✅ pymysql imported successfully: {pymysql.__version__}')" || echo "⚠️  Failed to import pymysql"
       
       - name: Run mypy
         working-directory: ${{ inputs.working_directory }}
         run: |
           echo "=== Running mypy ==="
+          echo "Working directory: $(pwd)"
+          echo "Python path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+          echo "Verifying pymysql and types-PyMySQL before mypy run:"
+          pip show pymysql types-PyMySQL || echo "Packages not found"
+          
           # Matches GitLab: --exclude 'test_.*.py$' --install-types --non-interactive --strict
+          # Note: --install-types should auto-install missing stubs, but we've already installed them
           mypy . \
             --exclude 'test_.*.py$' \
             --install-types \

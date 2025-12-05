@@ -37,7 +37,8 @@ This document compares the features available in GitLab CI templates vs GitHub A
 | **Infrastructure Management** |
 | Detect drift                  | `.default-detect_drift`          | ❌ Missing     | 🟡 Medium   | Terraform state drift detection    |
 | Verify infrastructure         | `.default-verify_infrastructure` | ❌ Missing     | 🟡 Medium   | Post-deploy verification           |
-| Reset env branches            | `.default-reset_env_branches`    | ❌ Missing     | 🟢 Low      | Reset env branches from main       |
+| **Branch Management**         |
+| Reset env branches            | `.default-reset_env_branches`    | ❌ Missing     | 🟡 Medium   | Reset env branches to match main   |
 | **Build & Push**              |
 | Build and push Docker         | `.default-build_and_push`        | ❌ Missing     | 🟡 Medium   | Docker image build/push            |
 | **Vue.js Specific**           |
@@ -70,7 +71,29 @@ This document compares the features available in GitLab CI templates vs GitHub A
 
 **Impact:** High - This is a core feature for version management and release tracking.
 
-### 2. Infrastructure Drift Detection (🟡 MEDIUM PRIORITY)
+### 2. Branch Reset (🟡 MEDIUM PRIORITY)
+
+**GitLab Implementation:**
+
+- `.default-reset_env_branches` job
+- Resets environment branches (env/dev, env/qat, env/stg) to match main branch
+- Runs automatically after merges to main (post-merge mode)
+- Can also run on schedule (weekly) or manually
+- Checks if branches have diverged from main
+- Deletes and recreates branches from main to keep them in sync
+- Uses GitLab API or Git commands
+
+**GitHub Equivalent Needed:**
+
+- Create `reset-env-branches.yml` workflow
+- Use GitHub API to check branch divergence
+- Delete and recreate environment branches from main
+- Support multiple modes: post-merge, scheduled, manual
+- Run on push to main (post-merge) or on schedule
+
+**Impact:** Medium - Important for keeping environment branches in sync with main, but can be done manually if needed.
+
+### 3. Infrastructure Drift Detection (🟡 MEDIUM PRIORITY)
 
 **GitLab Implementation:**
 
@@ -86,7 +109,7 @@ This document compares the features available in GitLab CI templates vs GitHub A
 
 **Impact:** Medium - Useful for infrastructure codeitems but not critical for Lambda functions.
 
-### 3. Infrastructure Verification (🟡 MEDIUM PRIORITY)
+### 4. Infrastructure Verification (🟡 MEDIUM PRIORITY)
 
 **GitLab Implementation:**
 
@@ -101,7 +124,7 @@ This document compares the features available in GitLab CI templates vs GitHub A
 
 **Impact:** Medium - Good practice but can be added later.
 
-### 4. Docker Build & Push (🟡 MEDIUM PRIORITY)
+### 5. Docker Build & Push (🟡 MEDIUM PRIORITY)
 
 **GitLab Implementation:**
 
@@ -168,6 +191,7 @@ This document compares the features available in GitLab CI templates vs GitHub A
    - Document usage
 
 3. **Phase 3: Add Medium-Priority Features** (As needed)
+   - Branch reset workflow (for keeping env branches in sync)
    - Infrastructure drift detection (for Terraform codeitems)
    - Docker build/push (for containerized apps)
    - Infrastructure verification (as needed)
@@ -183,11 +207,12 @@ This document compares the features available in GitLab CI templates vs GitHub A
 
 1. **Now:** Integrate current templates into codeitems
 2. **Week 1-2:** Add auto-tag-release workflow
-3. **As needed:** Add drift detection, Docker build, etc.
+3. **As needed:** Add branch reset, drift detection, Docker build, etc.
 
 ## Notes
 
 - Most Lambda codeitems don't need Docker build/push
 - Most codeitems don't need infrastructure drift detection
 - Auto-tagging/release is the most commonly requested missing feature
+- Branch reset is important for maintaining environment branches but can be done manually
 - Can always add features later without breaking existing workflows

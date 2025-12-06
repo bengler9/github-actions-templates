@@ -282,8 +282,6 @@ jobs:
             echo "Uploading pytest-report.xml to S3..."
             aws s3 cp "${{ inputs.working_directory }}/pytest-report.xml" \
               "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-report.xml" \
-              --sse aws:kms \
-              --sse-kms-key-id alias/CloudBotPipelineKey \
               --region us-east-2 || echo "Warning: Failed to upload report.xml"
           fi
           
@@ -291,8 +289,6 @@ jobs:
             echo "Uploading coverage.xml to S3..."
             aws s3 cp "${{ inputs.working_directory }}/coverage.xml" \
               "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-coverage.xml" \
-              --sse aws:kms \
-              --sse-kms-key-id alias/CloudBotPipelineKey \
               --region us-east-2 || echo "Warning: Failed to upload coverage.xml"
           fi
         shell: bash

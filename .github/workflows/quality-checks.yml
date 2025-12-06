@@ -164,8 +164,6 @@ jobs:
               echo "Uploading ${report}.txt to S3..."
               aws s3 cp "${{ inputs.working_directory }}/${report}.txt" \
                 "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-${report}.txt" \
-                --sse aws:kms \
-                --sse-kms-key-id alias/CloudBotPipelineKey \
                 --region us-east-2 || echo "Warning: Failed to upload ${report}.txt"
             fi
           done
@@ -314,8 +312,6 @@ jobs:
             echo "Uploading mypy.xml to S3..."
             aws s3 cp "${{ inputs.working_directory }}/mypy.xml" \
               "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-mypy.xml" \
-              --sse aws:kms \
-              --sse-kms-key-id alias/CloudBotPipelineKey \
               --region us-east-2 || echo "Warning: Failed to upload mypy.xml"
           fi
           
@@ -323,8 +319,6 @@ jobs:
             echo "Uploading index.xml to S3..."
             aws s3 cp "${{ inputs.working_directory }}/index.xml" \
               "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-mypycov.xml" \
-              --sse aws:kms \
-              --sse-kms-key-id alias/CloudBotPipelineKey \
               --region us-east-2 || echo "Warning: Failed to upload index.xml"
           fi
         shell: bash

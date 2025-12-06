@@ -120,11 +120,9 @@ jobs:
           
           if [ -f "${{ inputs.working_directory }}/bandit.xml" ]; then
             echo "Uploading bandit.xml to S3..."
-            aws s3 cp "${{ inputs.working_directory }}/bandit.xml" \
-              "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-bandit.xml" \
-              --sse aws:kms \
-              --sse-kms-key-id alias/CloudBotPipelineKey \
-              --region us-east-2 || echo "Warning: Failed to upload bandit.xml"
+              aws s3 cp "${{ inputs.working_directory }}/bandit.xml" \
+                "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-bandit.xml" \
+                --region us-east-2 || echo "Warning: Failed to upload bandit.xml"
           fi
         shell: bash
       
@@ -192,8 +190,6 @@ jobs:
             echo "Uploading checkov.xml to S3..."
             aws s3 cp "${{ inputs.working_directory }}/checkov.xml" \
               "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-checkov.xml" \
-              --sse aws:kms \
-              --sse-kms-key-id alias/CloudBotPipelineKey \
               --region us-east-2 || echo "Warning: Failed to upload checkov.xml"
           fi
         shell: bash
@@ -274,8 +270,6 @@ jobs:
               echo "Uploading ${report} to S3..."
               aws s3 cp "${{ inputs.working_directory }}/${report}" \
                 "s3://${REPORTS_BUCKET}/incoming/${ACCOUNTID}/${PROJECT_NAME}/${DATETIME}-${report}" \
-                --sse aws:kms \
-                --sse-kms-key-id alias/CloudBotPipelineKey \
                 --region us-east-2 || echo "Warning: Failed to upload ${report}"
             fi
           done
